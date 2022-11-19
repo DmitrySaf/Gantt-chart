@@ -1,8 +1,10 @@
 @import url(./variables.css);
 @import url(./fonts.css);
+@import url(./fontello.css);
 @import url(./general.css);
 @import url(./mixins.css);
 
 /* Sections */
 @import url(./sections/hero.css);
 @import url(./sections/products.css);
+@import url(./sections/value.css);
