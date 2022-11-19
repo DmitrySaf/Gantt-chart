@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Euclid Circular A';
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+}
+
+.container {
+  max-width: 1100px;
+  padding: 0 60px;
+  margin: 0 auto;
+}
