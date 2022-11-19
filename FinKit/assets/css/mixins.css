@@ -12,3 +12,9 @@
   padding: 0;
   cursor: pointer;
 }
+
+@media ( max-width: 575px ) {
+  .button {
+    width: 100%;
+  }
+}
