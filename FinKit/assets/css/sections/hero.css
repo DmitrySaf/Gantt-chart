@@ -1,0 +1,67 @@
+.hero {
+  padding-top: 25px;
+  max-height: 678px;
+  background-color: var(--color-background-hero);
+}
+
+.hero__language {
+  display: flex;
+  justify-content: flex-end;
+  gap: 11px;
+}
+
+.hero__language-item > input {
+  all: unset;
+  appearance: none;
+}
+
+.hero__language-item > span {
+  padding: 2px 4px;
+  border-radius: .75rem;
+  cursor: pointer;
+}
+
+.hero__language-item > input:checked ~ span {
+  background-color: #FFFFFF;
+  color: var(--color-main);
+}
+
+.hero__wrapper {
+  margin-top: 15px;
+  display: flex;
+
+}
+
+.hero__img {
+  margin-right: -188px;
+  width: 740px;
+  height: 684px;
+}
+
+.hero__info-header {
+  font-size: 4rem;
+  margin: 0 0 11px;
+}
+
+.hero__info-header > span {
+  padding: 0 12px;
+  background-color: #FFFFFF;
+  border-radius: 20px;
+  color: var(--color-main);
+}
+
+.hero__info-description {
+  font-size: 1.375rem;
+  max-width: 384px;
+  margin-bottom: 38px;
+}
+
+.hero__advantages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  column-gap: 20px;
+}
+
+.hero__advantages {
+  width: 100%;
+}
