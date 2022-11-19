@@ -1,0 +1,31 @@
+@font-face {
+  font-family: 'fontello';
+  src: url('../fonts/fontello/fontello.eot?24286259');
+  src: url('../fonts/fontello/fontello.eot?24286259#iefix') format('embedded-opentype'),
+       url('../fonts/fontello/fontello.woff2?24286259') format('woff2'),
+       url('../fonts/fontello/fontello.woff?24286259') format('woff'),
+       url('../fonts/fontello/fontello.ttf?24286259') format('truetype'),
+       url('../fonts/fontello/fontello.svg?24286259#fontello') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"]:before, [class*=" icon-"]:before {
+  font-family: "fontello";
+  font-style: normal;
+  font-weight: normal;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1.25em;
+  text-align: center;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1.25em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-activity:before { content: '\e800'; color: var(--color-main); }
+.icon-filter:before { content: '\e802'; color: var(--color-main); }
+.icon-graph:before { content: '\e803'; color: var(--color-main); }
+.icon-settings:before { content: '\e807'; color: var(--color-main); }
