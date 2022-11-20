@@ -1,0 +1,36 @@
+.export-button {
+  padding: 11px 16px 11px 20px;
+  max-width: 100px;
+  max-height: 40px;
+  border: 1px solid rgba(38, 40, 66, 0.12);
+  border-radius: 10px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: .5s all;
+  &:hover {
+    background-color: #262842;
+    border: 1px solid #FFFFFF;
+    & > .export-button__icon:before {
+      color: #fff;
+    }
+    & > .export-button__text {
+      color: #fff;
+    }
+  }
+  &__icon:before {
+    content: '\e806';
+    font-family: "fontello";
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: .5s all;
+  }
+  &__text {
+    color: #262842;
+    font-size: .875rem;
+    font-weight: 500;
+    transition: .5s all;
+  }
+}
