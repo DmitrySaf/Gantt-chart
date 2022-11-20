@@ -1,0 +1,29 @@
+.error-message {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  place-content: center;
+  &__title {
+    text-align: center;
+    color: #262842;
+  }
+  &__button {
+    width: 100%;
+    max-width: 200px;
+    padding: 10px 20px;
+    background-color: #262842;
+    border: none;
+    border-radius: 8px;
+    color: #FFFFFF;
+    font-size: 1.25rem;
+    transition: .5s all;
+    cursor: pointer;
+    text-transform: uppercase;
+    &:hover {
+      color: #262842;
+      background-color: #FFFFFF;
+      outline: 1px solid #262842;
+    }
+  }
+}
