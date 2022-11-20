@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import './ExportButton.scss';
 
 function ExportButton() {
@@ -9,4 +11,4 @@ function ExportButton() {
   );
 }
 
-export default ExportButton;
+export default memo(ExportButton);
