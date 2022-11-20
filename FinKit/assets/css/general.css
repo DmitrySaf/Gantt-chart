@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  font-family: 'Euclid Circular A';
+  font-family: 'Euclid Circular A', 'Arial', sans-serif;
   font-weight: 400;
   font-size: 1rem;
   color: var(--color-text-primary);
