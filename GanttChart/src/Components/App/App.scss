@@ -1,0 +1,11 @@
+.project {
+  width: 100%;
+  padding: 22px 24px 24px;
+  &__header {
+    display: flex;
+    justify-content: space-between;
+  }
+  &__title {
+    margin: 0;
+  }
+}
