@@ -3,8 +3,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 interface ProjectChart {
   id: number,
   title: string,
-  periodStart: string,
-  periodEnd: string,
+  period_start: string,
+  period_end: string,
   sub?: ProjectChart[]
 }
 
@@ -21,8 +21,8 @@ const initialState: Project = {
   chart: {
     id: 0,
     title: '',
-    periodStart: '',
-    periodEnd: ''
+    period_start: '',
+    period_end: ''
   },
   loadingStatus: 'idle'
 };
