@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from "../../hooks/typedHooks";
 import Spinner from "../Spinner/Spinner";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import ExportButton from "../ExportButton/ExportButton";
+import Table from "../Table/Table";
 
 import './App.scss';
 
@@ -26,6 +27,7 @@ function App() {
         <h1 className="project__title">{name} / {period}</h1>
         <ExportButton />
       </div>
+      <Table />
     </div>
   );
 }

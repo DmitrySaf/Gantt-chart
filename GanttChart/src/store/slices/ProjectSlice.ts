@@ -59,6 +59,5 @@ const projectSlice = createSlice({
   }
 });
 
-const { reducer } = projectSlice;
-
-export default reducer;
+export default projectSlice.reducer;
+export type { ProjectChart };
