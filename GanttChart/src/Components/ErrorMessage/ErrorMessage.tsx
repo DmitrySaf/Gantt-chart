@@ -9,7 +9,13 @@ function ErrorMessage() {
   return (
     <div className="error-message">
       <h1 className="error-message__title">Something went wrong... try again later</h1>
-      <button type="button" className="error-message__button" onClick={() => dispatch(fetchProject())}>try again</button>
+      <button
+        type="button"
+        className="error-message__button"
+        onClick={() => dispatch(fetchProject())}
+      >
+        try again
+      </button>
     </div>
   );
 }

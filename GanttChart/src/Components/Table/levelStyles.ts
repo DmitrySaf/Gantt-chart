@@ -10,7 +10,7 @@ interface ILevels {
   [index: number]: ILevel,
 }
 
-export default <ILevels>{
+export default {
   1: {
     className: 'table__task-icon_level_first',
     chartStyle: {
@@ -46,4 +46,4 @@ export default <ILevels>{
       border: '1px solid #FFA530',
     },
   },
-};
+} as ILevels;
