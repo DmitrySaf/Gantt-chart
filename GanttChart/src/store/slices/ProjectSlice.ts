@@ -22,9 +22,9 @@ const initialState: Project = {
     id: 0,
     title: '',
     period_start: '',
-    period_end: ''
+    period_end: '',
   },
-  loadingStatus: 'idle'
+  loadingStatus: 'idle',
 };
 
 export const fetchProject = createAsyncThunk(
@@ -33,7 +33,7 @@ export const fetchProject = createAsyncThunk(
     const response = await fetch('https://cors-anywhere.herokuapp.com/http://82.202.204.94/tmp/test.php');
     const parsedResponse = await response.json();
     return parsedResponse;
-  }
+  },
 );
 
 const projectSlice = createSlice({
@@ -42,13 +42,13 @@ const projectSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProject.pending, (state) => { state.loadingStatus = 'loading' })
-      .addCase(fetchProject.rejected, (state) => { state.loadingStatus = 'error' })
+      .addCase(fetchProject.pending, (state) => { state.loadingStatus = 'loading'; })
+      .addCase(fetchProject.rejected, (state) => { state.loadingStatus = 'error'; })
       .addCase(fetchProject.fulfilled, (state, action) => {
         const {
           project,
           period,
-          chart
+          chart,
         } = action.payload;
         state.name = project;
         state.period = period;
@@ -56,7 +56,7 @@ const projectSlice = createSlice({
         state.loadingStatus = 'idle';
       })
       .addDefaultCase(() => {});
-  }
+  },
 });
 
 export default projectSlice.reducer;

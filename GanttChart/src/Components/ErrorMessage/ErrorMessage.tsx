@@ -1,5 +1,5 @@
-import { useAppDispatch } from "../../hooks/typedHooks";
-import { fetchProject } from "../../store/slices/ProjectSlice";
+import { useAppDispatch } from '../../hooks/typedHooks';
+import { fetchProject } from '../../store/slices/ProjectSlice';
 
 import './ErrorMessage.scss';
 
