@@ -15,10 +15,11 @@ type HeaderProps = {
 type GridProps = {
   days: number,
   chart: ProjectChart,
-  startDate: number
+  startDate: number,
+  openedTasks: number[]
 };
 
-function TableTimeline() {
+function TableTimeline({ openedTasks }: { openedTasks: number[] }) {
   const { period, chart } = useAppSelector((state) => state);
   const DAY = (1000 * 60 * 60 * 24);
 
@@ -68,8 +69,17 @@ function TableTimeline() {
 
   return (
     <div className="table__timeline" onScroll={onTableScroll}>
-      <TableTimelineHeader days={getNumberOfDays()} startDate={startDate} endDate={endDate} />
-      <TableTimelineGrid days={getNumberOfDays()} chart={chart} startDate={startDate} />
+      <TableTimelineHeader
+        days={getNumberOfDays()}
+        startDate={startDate}
+        endDate={endDate}
+      />
+      <TableTimelineGrid
+        days={getNumberOfDays()}
+        chart={chart}
+        startDate={startDate}
+        openedTasks={openedTasks}
+      />
     </div>
   );
 }
@@ -133,7 +143,12 @@ function TableTimelineHeader({ days, startDate, endDate }: HeaderProps) {
   );
 }
 
-function TableTimelineGrid({ days, chart, startDate }: GridProps) {
+function TableTimelineGrid({
+  days,
+  chart,
+  startDate,
+  openedTasks,
+}: GridProps) {
   const DAY = (1000 * 60 * 60 * 24);
 
   const getDuration = (periodStart: string, periodEnd: string) => {
@@ -160,10 +175,15 @@ function TableTimelineGrid({ days, chart, startDate }: GridProps) {
       'table__timeline-task-marker_theme_yellow': level === 2 || level === 5,
       'table__timeline-task-marker_theme_green': level === 3 || level === 4,
     });
+    const taskClassnames = classNames({
+      'table__timeline-task': true,
+      'table__timeline-task_opened': openedTasks.includes(id),
+    });
+
     return (
       <Fragment key={id}>
         <div
-          className="table__timeline-task table__timeline-task_opened"
+          className={taskClassnames}
           style={{
             gridTemplateColumns: `${getDuration(period_start, period_end) * 22}px max-content`,
             marginLeft: `${getStartDay(period_start) * 22}px`,
@@ -173,7 +193,7 @@ function TableTimelineGrid({ days, chart, startDate }: GridProps) {
           <div className="table__timeline-task-title">{title}</div>
         </div>
         {
-          [...checkedSub].map((subElem) => createTaskTimelines(subElem, level + 1))
+          checkedSub.map((subElem) => createTaskTimelines(subElem, level + 1))
         }
       </Fragment>
     );

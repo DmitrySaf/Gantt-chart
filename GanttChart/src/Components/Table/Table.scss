@@ -36,16 +36,13 @@
   }
   &__task-info {
     padding: 11px 22px;
-    display: flex;
+    display: none;
     align-items: center;
     border-bottom: 1px solid rgba(38, 40, 66, 0.12);
     margin-bottom: -1px;
     cursor: pointer;
     &_opened {
-      & ~ .table__task-children {
-        height: 80px;
-        overflow: visible;
-      }
+      display: flex;
       & > .table__task-arrow::before {
         transform: rotate(0);
       }
@@ -56,8 +53,6 @@
     margin: 0;
   }
   &__task-children {
-    height: 0;
-    overflow: hidden;
     padding: 0;
     margin: 0;
   }
@@ -245,9 +240,9 @@
   }
   &__timeline-task {
     display: none;
-    height: 40px;
-    gap: 8px;
+    column-gap: 8px;
     align-items: center;
+    grid-template-rows: 40px;
     &_opened {
       display: grid;
     }

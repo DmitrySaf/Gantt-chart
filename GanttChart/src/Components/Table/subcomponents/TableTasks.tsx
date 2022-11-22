@@ -1,13 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import classNames from 'classnames';
 
 import { useAppSelector } from '../../../hooks/typedHooks';
 import { ProjectChart } from '../../../store/slices/ProjectSlice';
 
-function TableTasks() {
+function TableTasks({ handleStateChange }: { handleStateChange: (tasks: number[]) => void }) {
   const { chart } = useAppSelector((state) => state);
+  const [openedTasks, setOpenedTasks] = useState([chart.id]);
+
+  useEffect(() => {
+    handleStateChange(openedTasks);
+  }, [openedTasks]);
 
   const createTaskTree = (target: ProjectChart, level: number) => {
+    const { id, sub, title } = target;
     const iconClassnames = classNames({
       'table__task-icon': true,
       'table__task-icon_level_first': level === 1,
@@ -16,40 +22,45 @@ function TableTasks() {
       'table__task-icon_level_fourth': level === 4,
       'table__task-icon_level_fifth': level === 5,
     });
-    if (!target.sub || target.sub.length === 0) {
+    const taskClassnames = classNames({
+      'table__task-info': true,
+      'table__task-info_opened': openedTasks.includes(id),
+    });
+
+    if (!sub || sub.length === 0) {
       return (
-        <li className="table__task" key={target.id}>
-          <div className="table__task-info" style={{ paddingLeft: level * 20 }}>
+        <li className="table__task" key={id}>
+          <div className={taskClassnames} style={{ paddingLeft: level * 20 }}>
             <div className={iconClassnames} />
             <div className="table__task-children-quantity">0</div>
-            <div className="table__task-title">{target.title}</div>
+            <div className="table__task-title">{title}</div>
           </div>
         </li>
       );
     }
-
-    const onTaskOpen = (e: React.MouseEvent<Element, MouseEvent>) => {
-      e.stopPropagation();
-      const targetElem = e.currentTarget as HTMLElement;
-
-      targetElem.classList.toggle('table__task-info_opened');
+    const onTaskOpen = () => {
+      if (openedTasks.indexOf(id) + 1 !== openedTasks.length) {
+        setOpenedTasks([...openedTasks.splice(0, openedTasks.indexOf(id) + 1)]);
+        return;
+      }
+      setOpenedTasks([...openedTasks, ...sub.map((subElem) => subElem.id)]);
     };
 
     return (
-      <li className="table__task" key={target.id}>
+      <li className="table__task" key={id}>
         <div
-          className="table__task-info"
+          className={taskClassnames}
           style={{ paddingLeft: level * 20 }}
           onClick={onTaskOpen}
         >
-          {(target.sub.length > 0) && <div className="table__task-arrow" />}
+          {(sub.length > 0) && <div className="table__task-arrow" />}
           <div className={iconClassnames} />
-          <div className="table__task-children-quantity">{target.sub.length}</div>
-          <div className="table__task-title">{target.title}</div>
+          <div className="table__task-children-quantity">{sub.length}</div>
+          <div className="table__task-title">{title}</div>
         </div>
         <ul className="table__task-children">
           {
-            [...target.sub].map((sub) => createTaskTree(sub, level + 1))
+            sub.map((subElem) => createTaskTree(subElem, level + 1))
           }
         </ul>
       </li>
