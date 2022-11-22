@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { Fragment } from 'react';
 import classNames from 'classnames';
 
 import { useAppSelector } from '../../../hooks/typedHooks';
+import { ProjectChart } from '../../../store/slices/ProjectSlice';
 
-type ElemProps = {
+type HeaderProps = {
   days: number,
   startDate: number,
   endDate: number
+};
+
+type GridProps = {
+  days: number,
+  chart: ProjectChart,
+  startDate: number
 };
 
 function TableTimeline() {
@@ -14,7 +23,6 @@ function TableTimeline() {
   const DAY = (1000 * 60 * 60 * 24);
 
   const getMinDate = () => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const { period_start, sub } = chart;
     const startDate = new Date(period_start);
 
@@ -61,12 +69,12 @@ function TableTimeline() {
   return (
     <div className="table__timeline" onScroll={onTableScroll}>
       <TableTimelineHeader days={getNumberOfDays()} startDate={startDate} endDate={endDate} />
-      <TableTimelineGrid days={getNumberOfDays()} />
+      <TableTimelineGrid days={getNumberOfDays()} chart={chart} startDate={startDate} />
     </div>
   );
 }
 
-function TableTimelineHeader({ days, startDate, endDate }: ElemProps) {
+function TableTimelineHeader({ days, startDate, endDate }: HeaderProps) {
   const DAY = (1000 * 60 * 60 * 24);
 
   const createDaysChain = () => {
@@ -125,7 +133,52 @@ function TableTimelineHeader({ days, startDate, endDate }: ElemProps) {
   );
 }
 
-function TableTimelineGrid({ days }: { days: number }) {
+function TableTimelineGrid({ days, chart, startDate }: GridProps) {
+  const DAY = (1000 * 60 * 60 * 24);
+
+  const getDuration = (periodStart: string, periodEnd: string) => {
+    const startTime = new Date(periodStart).getTime();
+    const endTime = new Date(periodEnd).getTime();
+
+    return Math.ceil((endTime - startTime) / DAY) + 1;
+  };
+
+  const getStartDay = (periodStart: string) => {
+    const startTime = new Date(periodStart).getTime();
+
+    return Math.ceil((startTime - startDate) / DAY);
+  };
+
+  const createTaskTimelines = (target: ProjectChart, level: number): JSX.Element => {
+    const {
+      sub, period_start, period_end, title, id,
+    } = target;
+    const checkedSub = (!sub || sub.length === 0) ? [] : sub;
+    const markerClassnames = classNames({
+      'table__timeline-task-marker': true,
+      'table__timeline-task-marker_theme_blue': level === 1,
+      'table__timeline-task-marker_theme_yellow': level === 2 || level === 5,
+      'table__timeline-task-marker_theme_green': level === 3 || level === 4,
+    });
+    return (
+      <Fragment key={id}>
+        <div
+          className="table__timeline-task table__timeline-task_opened"
+          style={{
+            gridTemplateColumns: `${getDuration(period_start, period_end) * 22}px max-content`,
+            marginLeft: `${getStartDay(period_start) * 22}px`,
+          }}
+        >
+          <div className={markerClassnames} />
+          <div className="table__timeline-task-title">{title}</div>
+        </div>
+        {
+          [...checkedSub].map((subElem) => createTaskTimelines(subElem, level + 1))
+        }
+      </Fragment>
+    );
+  };
+
   return (
     <div className="table__timeline-grid-wrapper">
       <div className="table__timeline-grid" style={{ gridTemplateColumns: `repeat(${days}, 22px)` }}>
@@ -136,10 +189,7 @@ function TableTimelineGrid({ days }: { days: number }) {
         }
       </div>
       <div className="table__timeline-tasks">
-        <div className="table__timeline-task table__timeline-task_opened">
-          <div className="table__timeline-task-marker" />
-          <div className="table__timeline-task-title">Marketing launch</div>
-        </div>
+        {createTaskTimelines(chart, 1)}
       </div>
     </div>
   );
