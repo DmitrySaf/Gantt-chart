@@ -24,9 +24,11 @@ function App() {
   if (loadingStatus === 'error') return <ErrorMessage />;
 
   const valuesAreInvalid = () => (name.length === 0)
-    || !/[0-9][0-9]\.[0|1][0-9]\.20[0-9][0-9]-[0-9][0-9]\.[0|1][0-9]\.20[0-9][0-9]/.test(period)
+    || !/[0-9]{2}\.[0|1][0-9]\.20[0-9]{2}-[0-9]{2}\.[0|1][0-9]\.20[0-9]{2}/.test(period)
     || (chart.title.length === 0)
-    || (Number.isNaN(+new Date(chart.period_start)) || Number.isNaN(+new Date(chart.period_end)));
+    || (Number.isNaN(new Date(chart.period_start).getTime())
+      || Number.isNaN(new Date(chart.period_end).getTime())
+    );
 
   if (valuesAreInvalid()) return (<h1>Values are invalid</h1>);
 
