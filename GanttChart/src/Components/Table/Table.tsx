@@ -146,7 +146,21 @@ function Table() {
               { createDaysChain() }
             </div>
           </div>
-          
+          <div className="table__timeline-grid-wrapper">
+            <div className="table__timeline-grid" style={{gridTemplateColumns: `repeat(${getNumberOfDays()}, 22px)`}}>
+              {
+                [...Array(getNumberOfDays())].map((item, i) => (
+                  <div className="table__timeline-column" key={i}></div>
+                ))
+              }
+            </div>
+            <div className="table__timeline-tasks">
+                <div className="table__timeline-task table__timeline-task_opened">
+                  <div className="table__timeline-task-marker"></div>
+                  <div className="table__timeline-task-title">Marketing launch</div>
+                </div>
+              </div>
+          </div>
         </div>
       </div>
     </div>
