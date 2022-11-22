@@ -46,9 +46,7 @@ function Table() {
   };
   
   const createDaysChain = () => {
-    const ceiledEndDate = Math.ceil(endDate / (7 *1000 * 60 * 60 * 24)) * 7 * (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24);
-    const numberOfDays = Math.ceil((ceiledEndDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
-    const array = [...Array(numberOfDays)].map((item, i) => new Date(startDate + (1000 * 60 * 60 * 24) * i));
+    const array = [...Array(getNumberOfDays())].map((item, i) => new Date(startDate + (1000 * 60 * 60 * 24) * i));
     return array.map((day, i) => (
       <div
         key={i}
@@ -56,6 +54,11 @@ function Table() {
       >{day.getDate()}</div>
     ));
   };
+
+  const getNumberOfDays = () => {
+    const ceiledEndDate = Math.ceil(endDate / (7 *1000 * 60 * 60 * 24)) * 7 * (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24);
+    return Math.ceil((ceiledEndDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+  }
 
   const createTaskTree = (target: ProjectChart, level: number) => {
     if (!target.sub || target.sub.length === 0) {
@@ -79,7 +82,7 @@ function Table() {
 
     return (
       <li className="table__task" key={target.id}>
-        <div className="table__task-info" style={{paddingLeft: level * 20}} onClick={(e) => onTaskOpen(e)}>
+        <div className="table__task-info" style={{paddingLeft: level * 20}} onClick={onTaskOpen}>
           { target.sub &&  (target.sub.length > 0) && <div className="table__task-arrow"></div> }
           <div className={`table__task-icon ${levelStyles[level].className}`}></div>
           <div className="table__task-children-quantity">{target.sub && target.sub.length}</div>
@@ -96,8 +99,27 @@ function Table() {
     )
   };
 
+  const onTableScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const target = e.target as HTMLElement;
+    const { scrollLeft, scrollWidth, clientWidth, offsetParent } = target;
+    const rightShadow = offsetParent!.querySelector('.table__timeline-shadow_position_right')!;
+    const leftShadow = offsetParent!.querySelector('.table__timeline-shadow_position_left')!;
+    if (scrollLeft + clientWidth === scrollWidth) {
+      rightShadow.classList.remove('table__timeline-shadow_visible');
+    } else {
+      rightShadow.classList.add('table__timeline-shadow_visible');
+    }
+    if (scrollLeft > 0) {
+      leftShadow.classList.add('table__timeline-shadow_visible');
+    } else {
+      leftShadow.classList.remove('table__timeline-shadow_visible');
+    }
+  };
+
   return (
     <div className="table">
+      <div className="table__timeline-shadow table__timeline-shadow_position_right table__timeline-shadow_visible"></div>
+      <div className="table__timeline-shadow table__timeline-shadow_position_left"></div>
       <div className="table__content">
         <div className="table__tasks">
           <div className="table__task-header">Work item</div>
@@ -105,18 +127,26 @@ function Table() {
             { createTaskTree(chart, 1) }
           </ul>
         </div>
-        <div className="table__timeline">
+        <div className="table__timeline" onScroll={onTableScroll}>
           <div className="table__timeline-header">
-            {
-              formatDatetoWeeks().map(date => (
-                <div key={date} className="table__timeline-week">{date}</div>
-              ))
-            }
-            {createDaysChain()}
+            <div
+              className="table__timeline-header table__timeline-header_position_top"
+              style={{gridTemplateColumns: `repeat(${getNumberOfDays()}, 22px)`}}
+            >
+              {
+                formatDatetoWeeks().map(date => (
+                  <div key={date} className="table__timeline-week">{date}</div>
+                ))
+              }
+            </div>
+            <div
+              className="table__timeline-header table__timeline-header_position_bottom"
+              style={{gridTemplateColumns: `repeat(${getNumberOfDays()}, 22px)`}}
+            >
+              { createDaysChain() }
+            </div>
           </div>
-          <div className="table__timeline-grid">
-            
-          </div>
+          
         </div>
       </div>
     </div>
