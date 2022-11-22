@@ -8,10 +8,11 @@ import './Table.scss';
 
 function Table() {
   const { period, chart } = useAppSelector((state) => state);
+  const DAY = (1000 * 60 * 60 * 24);
 
   const getMinDate = () => {
-    const { period_start, sub } = chart;
-    const startDate = new Date(period_start);
+    const { periodStart, sub } = chart;
+    const startDate = new Date(periodStart);
 
     if (!sub) return startDate;
 
@@ -20,13 +21,14 @@ function Table() {
 
     while (queue.length > 0) {
       const subs = queue.shift()!;
-      const date = new Date(subs.period_start);
+      const date = new Date(subs.periodStart);
 
       if (subs.sub) queue.push(...subs.sub);
+      // eslint-disable-next-line no-continue
       if (date > minDate) continue;
       minDate = date;
     }
-    return +minDate - (1000 * 60 * 60 * 24);
+    return +minDate - DAY;
   };
   const startDate = +getMinDate();
   const endDate = +new Date(period.split('-')[1]?.replace(/(^[0-9]{2}\.)([0-9]{2}\.)/g, '$2$1'));
@@ -35,18 +37,23 @@ function Table() {
     const options: { month: 'short', day: '2-digit' } = { month: 'short', day: '2-digit' };
     const weeksArray = [];
     let lastDate = startDate;
-    weeksArray.push(`${new Date(lastDate).toLocaleDateString('en-US', options)} - ${new Date(lastDate + 6 * (1000 * 60 * 60 * 24)).toLocaleDateString('en-US', options)}`);
-    lastDate += 6 * (1000 * 60 * 60 * 24);
+    weeksArray.push(`${new Date(lastDate).toLocaleDateString('en-US', options)} - ${new Date(lastDate + 6 * DAY).toLocaleDateString('en-US', options)}`);
+    lastDate += 6 * DAY;
     while (lastDate < endDate) {
-      lastDate += (1000 * 60 * 60 * 24);
-      weeksArray.push(`${new Date(lastDate).toLocaleDateString('en-US', options)} - ${new Date(lastDate + 6 * (1000 * 60 * 60 * 24)).toLocaleDateString('en-US', options)}`);
-      lastDate += 6 * (1000 * 60 * 60 * 24);
+      lastDate += DAY;
+      weeksArray.push(`${new Date(lastDate).toLocaleDateString('en-US', options)} - ${new Date(lastDate + 6 * DAY).toLocaleDateString('en-US', options)}`);
+      lastDate += 6 * DAY;
     }
     return weeksArray;
   };
 
+  const getNumberOfDays = () => {
+    const ceiledEndDate = Math.ceil(endDate / (7 * DAY)) * 7 * DAY - DAY;
+    return Math.ceil((ceiledEndDate - startDate) / DAY) + 1;
+  };
+
   const createDaysChain = () => {
-    const array = [...Array(getNumberOfDays())].map((item, i) => new Date(startDate + (1000 * 60 * 60 * 24) * i));
+    const array = [...Array(getNumberOfDays())].map((item, i) => new Date(startDate + DAY * i));
     return array.map((day, i) => (
       <div
         key={i}
@@ -55,11 +62,6 @@ function Table() {
         {day.getDate()}
       </div>
     ));
-  };
-
-  const getNumberOfDays = () => {
-    const ceiledEndDate = Math.ceil(endDate / (7 * 1000 * 60 * 60 * 24)) * 7 * (1000 * 60 * 60 * 24) - (1000 * 60 * 60 * 24);
-    return Math.ceil((ceiledEndDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
   };
 
   const createTaskTree = (target: ProjectChart, level: number) => {
@@ -77,9 +79,9 @@ function Table() {
 
     const onTaskOpen = (e: React.MouseEvent<Element, MouseEvent>) => {
       e.stopPropagation();
-      const target = e.currentTarget as HTMLElement;
+      const targetElem = e.currentTarget as HTMLElement;
 
-      target.classList.toggle('table__task-info_opened');
+      targetElem.classList.toggle('table__task-info_opened');
     };
 
     return (

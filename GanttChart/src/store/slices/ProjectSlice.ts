@@ -1,10 +1,11 @@
+/* eslint-disable no-param-reassign */
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ProjectChart {
   id: number,
   title: string,
-  period_start: string,
-  period_end: string,
+  periodStart: string,
+  periodEnd: string,
   sub?: ProjectChart[]
 }
 
@@ -21,8 +22,8 @@ const initialState: Project = {
   chart: {
     id: 0,
     title: '',
-    period_start: '',
-    period_end: '',
+    periodStart: '',
+    periodEnd: '',
   },
   loadingStatus: 'idle',
 };
@@ -52,7 +53,11 @@ const projectSlice = createSlice({
         } = action.payload;
         state.name = project;
         state.period = period;
-        state.chart = chart;
+        state.chart = {
+          ...chart,
+          periodStart: chart.period_start,
+          periodEnd: chart.period_end,
+        };
         state.loadingStatus = 'idle';
       })
       .addDefaultCase(() => {});

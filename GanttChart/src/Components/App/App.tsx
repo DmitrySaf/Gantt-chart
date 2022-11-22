@@ -26,7 +26,7 @@ function App() {
   const valuesAreInvalid = () => (name.length === 0)
     || !/[0-9][0-9]\.[0|1][0-9]\.20[0-9][0-9]-[0-9][0-9]\.[0|1][0-9]\.20[0-9][0-9]/.test(period)
     || (chart.title.length === 0)
-    || (isNaN(+new Date(chart.period_start)) || isNaN(+new Date(chart.period_end)));
+    || (Number.isNaN(+new Date(chart.periodStart)) || Number.isNaN(+new Date(chart.periodEnd)));
 
   if (valuesAreInvalid()) return (<h1>Values are invalid</h1>);
 
