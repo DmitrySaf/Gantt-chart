@@ -34,11 +34,7 @@ function App() {
     <div className="project">
       <div className="project__header">
         <h1 className="project__title">
-          {name}
-          {' '}
-          /
-          {' '}
-          {period}
+          {name} / {period}
         </h1>
         <ExportButton />
       </div>
