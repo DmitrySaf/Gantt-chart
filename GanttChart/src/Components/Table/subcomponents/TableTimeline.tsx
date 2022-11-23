@@ -245,6 +245,37 @@ function TableTimelineGrid({
       document.addEventListener('pointerup', onPointerUp);
     };
 
+    const onResize = (e: React.PointerEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const resizeElem = e.target as HTMLElement;
+      const marker = resizeElem.parentElement!;
+      const markerOffsetLeft = marker.getBoundingClientRect().left;
+      const subTasks = [...marker.parentElement!.nextElementSibling!.children];
+      const subTasksWidth = (subTasks.length !== 0)
+        ? subTasks
+          .map((task) => (task.firstElementChild!.firstElementChild! as HTMLElement).offsetWidth)
+          .reduce((acc, curr) => acc + curr)
+        : 0;
+
+      const onPointerMove = (event: { pageX: number }) => {
+        const width = Math.round((event.pageX - markerOffsetLeft) / 22) * 22;
+
+        if ((width < 22) || (width < subTasksWidth)) return;
+
+        marker.style.width = `${width}px`;
+      };
+
+      const onPointerUp = (/* event: { pageX: number } */) => {
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+      };
+
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+    };
+
     sessionState[id] = { period_start, period_end };
 
     return (
@@ -258,7 +289,9 @@ function TableTimelineGrid({
               className={markerClassnames}
               onPointerDown={onPointerDown}
               style={{ width: `${calcDatesDifference(period_start, period_end) + 22}px` }}
-            />
+            >
+              <div className="table__timeline-marker-resize" onPointerDown={onResize} />
+            </div>
             <div className="table__timeline-task-title">{title}</div>
           </div>
           <div className="table__timeline-task-children">

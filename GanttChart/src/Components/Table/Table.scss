@@ -259,12 +259,17 @@
     gap: 8px;
   }
   &__timeline-task-marker {
+    position: relative;
     height: 24px;
     width: 100%;
     border-radius: 4px;
     border-width: 1px;
     border-style: solid;
     cursor: grab;
+    transition: .2s border-width;
+    &:hover {
+      border-width: 1px 3px;
+    }
     &_theme {
       &_blue {
         border-color: #497CF6;
@@ -282,5 +287,27 @@
   }
   &__timeline-task-title {
     font-size: 0.874rem;
+  }
+  &__timeline-marker-resize {
+    &::before {
+      content: '';
+      cursor: col-resize;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 10px;
+      transform: translateX(-50%);
+      height: 100%;
+    }
+    &::after {
+      content: '';
+      cursor: col-resize;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 10px;
+      transform: translateX(50%);
+      height: 100%;
+    }
   }
 }
