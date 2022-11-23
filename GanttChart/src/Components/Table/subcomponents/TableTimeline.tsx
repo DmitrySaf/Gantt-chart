@@ -40,6 +40,7 @@ function TableTimeline({ openedTasks }: { openedTasks: number[] }) {
     }
     return minDate.getTime() - DAY;
   };
+
   const startDate = getMinDate();
   const endDate = new Date(period.split('-')[1]?.replace(/(^[0-9]{2}\.)([0-9]{2}\.)/g, '$2$1')).getTime();
 
@@ -50,6 +51,7 @@ function TableTimeline({ openedTasks }: { openedTasks: number[] }) {
     } = target;
     const rightShadow = offsetParent!.querySelector('.table__timeline-shadow_position_right')!;
     const leftShadow = offsetParent!.querySelector('.table__timeline-shadow_position_left')!;
+
     if (scrollLeft + clientWidth === scrollWidth) {
       rightShadow.classList.remove('table__timeline-shadow_visible');
       return;
@@ -64,6 +66,7 @@ function TableTimeline({ openedTasks }: { openedTasks: number[] }) {
 
   const getNumberOfDays = () => {
     const ceiledEndDate = Math.ceil(endDate / (7 * DAY)) * 7 * DAY - DAY;
+
     return Math.ceil((ceiledEndDate - startDate) / DAY) + 1;
   };
 
@@ -89,11 +92,13 @@ function TableTimelineHeader({ days, startDate, endDate }: HeaderProps) {
 
   const createDaysChain = () => {
     const array = [...Array(days)].map((item, i) => new Date(startDate + DAY * i));
+
     return array.map((day, i) => {
       const timelineDayClassnames = classNames({
         'table__timeline-day': true,
         'table__timeline-day_weekend': (day.getDay() === 0 || day.getDay() === 6),
       });
+
       return (<div key={i} className={timelineDayClassnames}>{day.getDate()}</div>);
     });
   };
@@ -101,23 +106,22 @@ function TableTimelineHeader({ days, startDate, endDate }: HeaderProps) {
   const formatDatetoWeeks = () => {
     const options: { month: 'short', day: '2-digit' } = { month: 'short', day: '2-digit' };
     const weeksArray = [];
-    let lastDate = startDate;
-
     const formatDate = (date: number) => (
-      `${
-        new Date(date).toLocaleDateString('en-US', options)
-      } - ${
-        new Date(date + 6 * DAY).toLocaleDateString('en-US', options)
-      }`
+      `${new Date(date).toLocaleDateString('en-US', options)}
+       - 
+      ${new Date(date + 6 * DAY).toLocaleDateString('en-US', options)}`
     );
+    let lastDate = startDate;
 
     weeksArray.push(formatDate(lastDate));
     lastDate += 6 * DAY;
+
     while (lastDate < endDate) {
       lastDate += DAY;
       weeksArray.push(formatDate(lastDate));
       lastDate += 6 * DAY;
     }
+
     return weeksArray;
   };
 
@@ -143,28 +147,39 @@ function TableTimelineHeader({ days, startDate, endDate }: HeaderProps) {
   );
 }
 
+type ISessionState = {
+  [index: number]: {
+    period_start: string,
+    period_end: string
+  }
+};
+
 function TableTimelineGrid({
   days,
   chart,
   startDate,
   openedTasks,
 }: GridProps) {
+  const sessionState: ISessionState = {};
   const DAY = (1000 * 60 * 60 * 24);
 
-  const getDuration = (periodStart: string, periodEnd: string) => {
+  const calcDatesDifference = (periodStart: string | number, periodEnd: string | number) => {
     const startTime = new Date(periodStart).getTime();
     const endTime = new Date(periodEnd).getTime();
 
-    return Math.ceil((endTime - startTime) / DAY) + 1;
+    return Math.ceil((endTime - startTime) / DAY) * 22;
   };
 
-  const getStartDay = (periodStart: string) => {
-    const startTime = new Date(periodStart).getTime();
+  const pixelsToDate = (pixels: number) => Math.round(pixels / 22);
 
-    return Math.ceil((startTime - startDate) / DAY);
-  };
+  const millisecondsToFormatDate = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
-  const createTaskTimelines = (target: ProjectChart, level: number): JSX.Element => {
+  const createTaskTimelines = (
+    target: ProjectChart,
+    level: number,
+    prevStartDate: string | number,
+    prevEndDate?: string | number,
+  ) => {
     const {
       sub, period_start, period_end, title, id,
     } = target;
@@ -180,21 +195,80 @@ function TableTimelineGrid({
       'table__timeline-task_opened': openedTasks.includes(id),
     });
 
+    const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+      e.preventDefault();
+
+      const marker = e.target as HTMLElement;
+      const task = marker.parentElement!.parentElement as HTMLElement;
+      const taskOffsetLeft = task.parentElement!.parentElement!.offsetLeft;
+      const tasksOffsetLeft = marker.offsetParent!.getBoundingClientRect().left;
+      const markerGrabLeft = e.pageX - marker.getBoundingClientRect().left;
+
+      marker.style.cursor = 'grabbing';
+
+      const calcLeftValue = (event: { pageX: number }) => (
+        Math.round((event.pageX - tasksOffsetLeft - markerGrabLeft - taskOffsetLeft) / 22) * 22
+      );
+
+      const onPointerMove = (event: PointerEvent) => {
+        const left = calcLeftValue(event);
+
+        if (left < 0) return;
+        if (
+          prevEndDate
+          && (left
+          > (calcDatesDifference(prevStartDate, prevEndDate)
+          - calcDatesDifference(period_start, period_end)))
+        ) return;
+
+        task.style.marginLeft = `${left}px`;
+      };
+
+      const onPointerUp = (event: { pageX: number }) => {
+        const left = calcLeftValue(event);
+        const period_start_date = startDate + left * DAY;
+        const period_end_date = period_start_date + pixelsToDate(marker.offsetWidth) * DAY - DAY;
+
+        marker.style.cursor = 'grab';
+        Object.keys(sessionState).forEach((objId) => {
+          sessionState[+objId] = {
+            period_start: millisecondsToFormatDate(period_start_date),
+            period_end: millisecondsToFormatDate(period_end_date),
+          };
+        });
+
+        document.removeEventListener('pointermove', onPointerMove);
+        document.removeEventListener('pointerup', onPointerUp);
+      };
+
+      document.addEventListener('pointermove', onPointerMove);
+      document.addEventListener('pointerup', onPointerUp);
+    };
+
+    sessionState[id] = { period_start, period_end };
+
     return (
       <Fragment key={id}>
         <div
           className={taskClassnames}
-          style={{
-            gridTemplateColumns: `${getDuration(period_start, period_end) * 22}px max-content`,
-            marginLeft: `${getStartDay(period_start) * 22}px`,
-          }}
+          style={{ marginLeft: `${calcDatesDifference(prevStartDate, period_start)}px` }}
         >
-          <div className={markerClassnames} />
-          <div className="table__timeline-task-title">{title}</div>
+          <div className="table__timeline-task-wrapper">
+            <div
+              className={markerClassnames}
+              onPointerDown={onPointerDown}
+              style={{ width: `${calcDatesDifference(period_start, period_end) + 22}px` }}
+            />
+            <div className="table__timeline-task-title">{title}</div>
+          </div>
+          <div className="table__timeline-task-children">
+            {
+              checkedSub.map((subElem) => (
+                createTaskTimelines(subElem, level + 1, period_start, period_end)
+              ))
+            }
+          </div>
         </div>
-        {
-          checkedSub.map((subElem) => createTaskTimelines(subElem, level + 1))
-        }
       </Fragment>
     );
   };
@@ -209,7 +283,7 @@ function TableTimelineGrid({
         }
       </div>
       <div className="table__timeline-tasks">
-        {createTaskTimelines(chart, 1)}
+        {createTaskTimelines(chart, 1, startDate)}
       </div>
     </div>
   );

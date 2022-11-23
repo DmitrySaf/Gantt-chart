@@ -6,7 +6,7 @@ import { ProjectChart } from '../../../store/slices/ProjectSlice';
 
 function TableTasks({ handleStateChange }: { handleStateChange: (tasks: number[]) => void }) {
   const { chart } = useAppSelector((state) => state);
-  const [openedTasks, setOpenedTasks] = useState([chart.id]);
+  const [openedTasks, setOpenedTasks] = useState<number[]>([]);
 
   useEffect(() => {
     handleStateChange(openedTasks);
@@ -39,11 +39,11 @@ function TableTasks({ handleStateChange }: { handleStateChange: (tasks: number[]
       );
     }
     const onTaskOpen = () => {
-      if (openedTasks.indexOf(id) + 1 !== openedTasks.length) {
-        setOpenedTasks([...openedTasks.splice(0, openedTasks.indexOf(id) + 1)]);
+      if (openedTasks.includes(id)) {
+        setOpenedTasks([...openedTasks.splice(0, openedTasks.indexOf(id))]);
         return;
       }
-      setOpenedTasks([...openedTasks, ...sub.map((subElem) => subElem.id)]);
+      setOpenedTasks([...openedTasks, id]);
     };
 
     return (
