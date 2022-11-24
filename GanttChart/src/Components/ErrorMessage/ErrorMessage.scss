@@ -26,4 +26,10 @@
       outline: 1px solid #262842;
     }
   }
+  &__link {
+    margin-top: 10px;
+    & > a {
+      margin-left: 5px;
+    }
+  }
 }

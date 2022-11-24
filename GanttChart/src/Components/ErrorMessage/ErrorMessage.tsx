@@ -16,6 +16,10 @@ function ErrorMessage() {
       >
         try again
       </button>
+      <div className="error-message__link">
+        or go here and activate CORS
+        <a target="_blank" rel="noreferrer" href="https://cors-anywhere.herokuapp.com/">https://cors-anywhere.herokuapp.com/</a>
+      </div>
     </div>
   );
 }
