@@ -1,5 +1,5 @@
 {
-  "name": "test-task",
+  "name": "Gantt-chart",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -35,5 +35,5 @@
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
   },
-  "homepage": "https://github.com/DmitrySaf/test-task"
+  "homepage": "https://github.com/DmitrySaf/Gantt-chart"
 }
